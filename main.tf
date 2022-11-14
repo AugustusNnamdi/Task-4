@@ -4,7 +4,7 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "3.29.1"
     }
   }
@@ -15,7 +15,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}"
+  name     = var.prefix
   location = "West Europe"
 }
 
@@ -38,7 +38,7 @@ resource "azurerm_subnet" "subnet" {
 
 
 resource "azurerm_app_service_plan" "asp" {
-  count = 3
+  count               = 3
   name                = "${var.azurerm_app_service_plan-asp}-${count.index}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -46,9 +46,6 @@ resource "azurerm_app_service_plan" "asp" {
   sku {
     tier = "Standard"
     size = "S1"
-  }
-  tags = {
-    Name  = "WebApp-${count.index}"
   }
 }
 
@@ -59,15 +56,6 @@ resource "azurerm_app_service" "as" {
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.asp[count.index].id
 
-
-  site_config {
-    dotnet_framework_version = "v4.0"
-    scm_type                 = "LocalGit"
-  }
-
-  app_settings = {
-    "SOME_KEY" = "some-value"
-  }
 
   connection_string {
     name  = "Database"
