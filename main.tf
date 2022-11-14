@@ -38,23 +38,43 @@ resource "azurerm_subnet" "subnet" {
 
 
 resource "azurerm_app_service_plan" "asp" {
-  count               = 3
-  name                = "${var.azurerm_app_service_plan-asp}-${count.index}"
+  name                = "asp-appserviceplan"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
+
+
+  kind     = "Linux"
+  reserved = true
+
 
   sku {
     tier = "Standard"
     size = "S1"
   }
+
+  tags = {
+    Creator = "Jklone"
+  }
 }
 
+/* /* # Settings for private Container Registires 
+locals {
+ en_variables = {
+	DOCKER_RESGISTRY_SERVER_URL		= "URL"
+	DOCKER_RESGISTRY_SERVER_USERNAME	= "USERNAME"
+	DOCKER_RESGISTRY_SERVER_PASSWORD	= "PASSWORD" */
+
+
 resource "azurerm_app_service" "as" {
-  count               = var.azurerm_app_service_plan-asp
   name                = "${var.prefix}-webapp"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  app_service_plan_id = azurerm_app_service_plan.asp[count.index].id
+  app_service_plan_id = azurerm_app_service_plan.asp.id
+
+  site_config {
+    linux_fx_version = "DOCKER|alpine:latest"
+    always_on        = "true"
+  }
 
 
   connection_string {
