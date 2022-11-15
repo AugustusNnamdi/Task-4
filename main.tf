@@ -37,6 +37,8 @@ resource "azurerm_subnet" "subnet" {
 }
 
 
+#creating first webapp
+
 resource "azurerm_app_service_plan" "asp" {
   name                = "asp-appserviceplan"
   location            = azurerm_resource_group.rg.location
@@ -44,14 +46,13 @@ resource "azurerm_app_service_plan" "asp" {
   kind     = "Linux"
   reserved = true
 
-
   sku {
     tier = "Standard"
     size = "S1"
   }
 
   tags = {
-    Creator = "Jklone"
+    Creator = "jklone"
   }
 }
 
@@ -61,7 +62,6 @@ locals {
 	DOCKER_RESGISTRY_SERVER_URL		= "URL"
 	DOCKER_RESGISTRY_SERVER_USERNAME	= "USERNAME"
 	DOCKER_RESGISTRY_SERVER_PASSWORD	= "PASSWORD" */
-
 
 resource "azurerm_app_service" "as" {
   name                = "${var.prefix}-webapp"
@@ -73,9 +73,8 @@ resource "azurerm_app_service" "as" {
     linux_fx_version = "DOCKER|nginx:latest"
     always_on        = "true"
   }
-
   tags = {
-    image = "Nginx"
+    image = "nginx"
   }
 
   connection_string {
@@ -84,6 +83,32 @@ resource "azurerm_app_service" "as" {
     value = "Server=some-server.mydomain.com;Integrated Security=SSPI"
   }
 }
+
+
+#creating second webapp
+
+resource "azurerm_app_service" "as1" {
+  name                = "jk-wordpress"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_app_service_plan.asp.id
+
+  site_config {
+    linux_fx_version = "DOCKER|wordpress:latest"
+    always_on        = "true"
+  }
+  tags = {
+    image = "wordpress"
+  }
+
+  connection_string {
+    name  = "Database"
+    type  = "SQLServer"
+    value = "Server=some-server.mydomain.com;Integrated Security=SSPI"
+  }
+}
+
+
 
 
 
