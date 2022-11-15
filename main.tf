@@ -41,8 +41,6 @@ resource "azurerm_app_service_plan" "asp" {
   name                = "asp-appserviceplan"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-
-
   kind     = "Linux"
   reserved = true
 
@@ -77,7 +75,7 @@ resource "azurerm_app_service" "as" {
   }
 
   tags = {
-    image = "Jklone"
+    image = "Nginx"
   }
 
   connection_string {
