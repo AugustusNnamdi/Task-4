@@ -85,3 +85,30 @@ resource "azurerm_app_service" "as" {
 }
 
 
+resource "azurerm_app_service_slot" "as_slot" {
+  name                = "dev"
+  app_service_name    = azurerm_app_service.as.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_app_service_plan.asp.id
+
+  site_config {
+    linux_fx_version = "DOCKER|wordpress:latest"
+    always_on        = "true"
+  }
+
+  app_settings = {
+    "SOME_KEY" = "some-value"
+  }
+
+  connection_string {
+    name  = "Database"
+    type  = "SQLServer"
+    value = "Server=some-server.mydomain.com;Integrated Security=SSPI"
+  }
+}
+
+
+
+
+

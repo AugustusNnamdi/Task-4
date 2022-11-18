@@ -7,5 +7,10 @@ output "url" {
   description = "The url of the webapp nginx."
 }
 
+output "sloturl" {
+  value       = azurerm_app_service_slot.as_slot[*].default_site_hostname
+  description = "The url of the webapp wordpress."
+}
+
 
 
