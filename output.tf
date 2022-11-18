@@ -13,4 +13,8 @@ output "sloturl" {
 }
 
 
+output "slot1url" {
+  value       = azurerm_app_service_slot.as_slot1[*].default_site_hostname
+  description = "The url of the webapp wordpress."
+}
 
